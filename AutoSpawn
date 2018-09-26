@@ -1,0 +1,86 @@
+if (Game.time == 0)
+{
+    Memory.spawns.bCarry = 50;
+    Memory.spawns.bMove = 50;
+    Memory.spawns.bWork = 100;
+
+    Memory.spawns.harvestBODY = [CARRY, MOVE];
+    Memory.spawns.harvestBODYenergy = 100;
+
+    Memory.spawns.KSMBODY = [CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
+    Memory.spawns.KSMBODYenergy = 300
+    
+    Memory.spawns.builderBODY = [CARRY, MOVE, WORK, WORK];
+    Memory.spawns.builderBODYenergy = 300;
+}
+
+var AutoSpawn = {
+    run: function(screeps, workingPlace) 
+    {
+        if (screeps == 'harvester')
+        {
+            if (Game.spawns['Spawn1'].room.energyCapacityAvailable == 800)
+            {
+                Memory.spawns.harvestBODY = [CARRY, CARRY, CARRY, MOVE, WORK, WORK, WORK, WORK, WORK];
+                Memory.spawns.harvestBODYenergy = 600;
+                Game.spawns['Spawn1'].spawnCreep(Memory.spawns.harvestBODY, screeps + Game.time, {memory: {role: screeps, companion: 'None', job: Memory.rooms.Sources[workingPlace].id}})
+            }
+            else
+            {
+                var needs = Memory.rooms.Sources[workingPlace].outpoot;
+                Memory.spawns.harvestBODY = [CARRY, MOVE];
+                Memory.spawns.harvestBODYenergy = 100;
+                while ((Game.spawns['Spawn1'].room.energyCapacityAvailable - Memory.spawns.harvestBODYenergy >= 100) && (needs != 0))
+                {
+                    Memory.spawns.harvestBODY.push(WORK);
+                    Memory.spawns.harvestBODYenergy += 100;
+                    needs -= 2;
+                }
+                Game.spawns['Spawn1'].spawnCreep(Memory.spawns.harvestBODY, screeps + Game.time, {memory: {role: screeps, companion: 'None', job: Memory.rooms.Sources[workingPlace].id}})
+            }
+        }
+        
+        
+        
+        
+        
+        if (screeps == 'KSM')
+        {
+            if ((Game.spawns['Spawn1'].room.energyCapacityAvailable - Memory.spawns.KSMBODYenergy) >= 150)
+            {
+                Memory.spawns.KSMBODY.push(CARRY);
+                Memory.spawns.KSMBODY.push(MOVE);
+                Memory.spawns.KSMBODY.push(MOVE);
+                Memory.spawns.KSMBODYenergy += 150;
+            }
+            if (Memory.rooms.Sources[0].id == Game.creeps[Memory.rooms.FreeUnit].memory.job)
+            {
+                Game.spawns['Spawn1'].spawnCreep(Memory.spawns.KSMBODY, screeps + Game.time, {memory: {role: screeps, companion: Memory.rooms.FreeUnit, goal: 'Spawn'}});
+            }
+            else
+            {
+                Game.spawns['Spawn1'].spawnCreep(Memory.spawns.KSMBODY, screeps + Game.time, {memory: {role: screeps, companion: Memory.rooms.FreeUnit, goal:'None'}});
+            }
+            Game.creeps[Memory.rooms.FreeUnit].memory.companion = screeps + Game.time;
+            Memory.rooms.FreeUnit = 'None';
+        }
+        
+        
+        
+        
+        
+        
+        if (screeps == 'builder')
+        {
+            if (Game.spawns['Spawn1'].room.energyCapacityAvailable - Memory.spawns.builderBODYenergy >= 100)
+            {
+                Memory.spawns.builderBODY.push(WORK);
+                Memory.spawns.builderBODYenergy += 100;
+            }
+            Game.spawns['Spawn1'].spawnCreep(Memory.spawns.builderBODY, screeps + Game.time, {memory: {role: screeps, companion: Memory.rooms.FreeUnit}});
+            Game.creeps[Memory.rooms.FreeUnit].memory.goal == screeps + Game.time;
+        }
+    }
+};
+
+module.exports = AutoSpawn;
