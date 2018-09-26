@@ -1,0 +1,33 @@
+var roleHarvester = {
+
+    run: function(creepHarvester) 
+    {
+//        var allSources = creepHarvester.room.find(FIND_SOURCES);                     // !!!!!!!!!!!!!
+//        const target = creepHarvester.pos.findClosestByRange(allSources);
+        
+        if (creepHarvester.carry.energy < creepHarvester.carryCapacity)
+        {
+            if(creepHarvester.harvest(Game.getObjectById(creepHarvester.memory.job)) == ERR_NOT_IN_RANGE) 
+            {
+                creepHarvester.moveTo(Game.getObjectById(creepHarvester.memory.job));
+            }
+        }
+        
+        if ((creepHarvester.carry.energy == creepHarvester.carryCapacity) && (creepHarvester.memory.companion == 'None'))
+        {
+           if(creepHarvester.transfer(Game.spawns['Spawn1'], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) 
+           {
+                creepHarvester.moveTo(Game.spawns['Spawn1']);
+           }
+        }
+        
+        if ((creepHarvester.carry.energy == creepHarvester.carryCapacity) && (creepHarvester.memory.companion != 'None'))
+        {
+            creepHarvester.drop(RESOURCE_ENERGY);
+        }
+        
+    }
+    
+};
+
+module.exports = roleHarvester;     
