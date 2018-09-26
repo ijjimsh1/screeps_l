@@ -1,0 +1,100 @@
+var roleKSM = {
+    run: function(KSM)
+    {
+        var Coop = KSM.memory.companion;
+        var HarvestTargets = KSM.room.find(FIND_STRUCTURES, 
+        {
+            filter: (structure) => 
+            {
+                return (structure.structureType == STRUCTURE_SPAWN ||
+                structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+            }
+        });
+        var HubTargets = KSM.room.find(FIND_STRUCTURES, 
+        {
+            filter: (structure) => 
+            {
+                return (structure.structureType == STRUCTURE_CONTAINER ||
+                structure.structureType == STRUCTURE_STORAGE);
+            }
+        });
+        
+        
+        
+        
+        if (KSM.carry.energy < KSM.carryCapacity)
+        {
+            KSM.moveTo(Game.creeps[Coop].pos);
+            KSM.pickup(KSM.pos.findClosestByRange(FIND_DROPPED_RESOURCES)); 
+        }
+        if ((KSM.carry.energy == KSM.carryCapacity) && ((KSM.memory.goal == 'Spawn') || (KSM.memory.goal == 'None')))
+        {
+            if ((HarvestTargets.length > 0) && (KSM.transfer(HarvestTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)) 
+            {
+                KSM.moveTo(HarvestTargets[0]);
+            }
+            else
+            {
+                for (var Hub in HubTargets)
+                {
+                    if (Hub.energy < Hub.energyCapacity)
+                    {
+                        if (KSM.transfer(Hub, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) 
+                        {
+                            KSM.moveTo(Hub);
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+module.exports = roleKSM;
+
+
+
+
+/*        if (Game.creeps[Coop].memory.role != 'harvester')
+        {
+            if (KSM.carry.energy < KSM.carryCapacity)
+            {
+                if (HubTargets.length == 0)
+                {
+                    const target1 = KSM.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+                    if (target1)
+                    {
+                        if(KSM.pickup(target1) == ERR_NOT_IN_RANGE) 
+                        {
+                            KSM.moveTo(target1);
+                        }
+                    }
+                }
+                else
+                {
+                    for (var Hub in HubTargets)
+                    {
+                        if (Hub.energy > 0)
+                        {
+                            if (KSM.withdraw(Hub, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) 
+                            {
+                                KSM.moveTo(Hub);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!(KSM.pos.isNearTo(Game.creeps[Coop])))
+                {
+                    KSM.moveTo(Game.creeps[Coop].pos);
+                }
+                else
+                {
+                    KSM.drop(RESOURCE_ENERGY);
+                }
+            }
+            
+        }
+    }
+*/
