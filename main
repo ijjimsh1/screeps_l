@@ -24,6 +24,9 @@ if (Game.time == 0)
 
 module.exports.loop = function () 
 {
+
+    console.log('GitHub test 1, turn: ' + Game.time);
+
     for (let i = 0; i < Memory.rooms.Sources.length; i++)
     {
         Memory.rooms.Sources[i].outpoot = Math.floor(Memory.rooms.Sources[i].energy / 300);
